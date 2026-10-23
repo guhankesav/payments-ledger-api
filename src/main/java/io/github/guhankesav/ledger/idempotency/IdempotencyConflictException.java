@@ -1,0 +1,8 @@
+package io.github.guhankesav.ledger.idempotency;
+
+public class IdempotencyConflictException extends RuntimeException {
+
+    public IdempotencyConflictException(String message) {
+        super(message);
+    }
+}

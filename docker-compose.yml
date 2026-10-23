@@ -1,0 +1,24 @@
+# Local run: DB_PASSWORD=<choose one> [API_PORT=8080] docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ledger
+      POSTGRES_USER: ledger
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledger -d ledger"]
+      interval: 2s
+      retries: 15
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/ledger
+      DB_USERNAME: ledger
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    ports:
+      - "${API_PORT:-8080}:8080"
